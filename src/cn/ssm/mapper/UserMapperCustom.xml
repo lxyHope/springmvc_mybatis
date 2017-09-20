@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ssm.mapper.UserMapperCustom">
+
+	<sql id="login_check">
+  		<if test="user.username != null and user.username != ''">
+		  	username = '${user.username}' AND address='${user.address}'
+  		</if>
+	</sql>
+	
+	<sql id="userLogin_check">
+		<if test="username != null">
+			username = '${username}' AND address = '${address}'
+		</if>
+	</sql>
+	
+	<select id="login" parameterType="cn.ssm.po.User" resultType="cn.ssm.po.User">
+		SELECT * FROM user
+		<where>
+			<include refid="login_check" />
+		</where>
+	</select>
+	
+	<select id="userLogin" parameterType="cn.ssm.po.UserVo" resultType="java.lang.Boolean">
+		SELECT * FROM user
+		<where>
+			<include refid="userLogin_check" />		
+		</where>
+	</select>
+
+</mapper>

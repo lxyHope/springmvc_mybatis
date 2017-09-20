@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.ssm.mapper.ItemsMapperCustom">
+  
+  <!-- 定义商品查询的sql片段 ,即商品查询条件-->
+  <sql id="query_items_where">
+  	<!-- 使用动态sql，通过if判断，满足条件的完成sql拼接 -->
+  	<!-- 此时判断传入的包装对象中的扩展类itemsCustom是否为空 -->
+  	<if test="itemsCustom != null">
+  		<!-- 如果包装对象中的扩展类不为空，则判断其属性是否为空或空字符串 -->
+  		<if test="itemsCustom.name != null and itemsCustom.name != ''">
+		  	items.`name` LIKE '%${itemsCustom.name}%'
+  		</if>
+  	</if>
+  </sql>
+  
+  <!-- parameterType：建议传入包装对象，新建一个包装对象，包装了查询条件 
+  	resultType:建议使用扩展类
+  -->
+  <select id="findItemsList" parameterType="cn.ssm.po.ItemsQueryVo" resultType="cn.ssm.po.ItemsCustom">
+  	SELECT * FROM items
+  	<where>	
+  		<include refid="query_items_where" />
+  	</where>
+  </select>
+  
+  <!-- 批量修改 -->
+  <update id="itemsUpdate" parameterType="java.util.List">  
+        <foreach close="" collection="list" index="index" item="item" open="" separator=";">  
+            update items set items.price=#{item.price,jdbcType=FLOAT},items.detail=#{item.detail,jdbcType=VARCHAR}            
+            where items.id=#{item.id,jdbcType=INTEGER}
+        </foreach>  
+  </update>  
+</mapper>
